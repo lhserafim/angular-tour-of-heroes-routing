@@ -14,3 +14,8 @@ https://angular.io/guide/router-tutorial-toh
           É necessário informar o pathMatch para dizer ao router como encontrar a URL
           Ex.:
           { path: '',   redirectTo: '/heroes', pathMatch: 'full' }
+2.  Milestone 2: Routing module
+    2.1.  Adicionando o módulo de roteamento: ng generate module app-routing --module app --flat
+    2.2.  No arquivo criado app-routing.module.ts, importar: CrisisListComponent, HeroListComponent e PageNotFoundComponent
+    2.3.  Trazer as rotas de navegação, que estavam temporariamente na classe app.module.ts
+    2.4.  Remover as definições de rotas, o RouterModule.forRoot e adicionar a importação do AppRoutingModule do app.module.ts
