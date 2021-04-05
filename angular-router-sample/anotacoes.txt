@@ -1,0 +1,16 @@
+https://angular.io/guide/router-tutorial-toh
+
+1.  Milestone 1: Getting started
+    1.1.  Criação da aplicação utilizando o CLI e criação dos primeiros módulos: crisis-list e hero-list
+    1.2.  Configuração basica do router no app.module.ts. Neste momento será feito aqui, mas conforme a aplicação cresce, será refaturado
+    1.3.  No template app.component.html, adicionar 2 links de navegação (com o routerLink) e o <router-outlet>
+        1.3.1.  Aqui foi utilizado um atributo RouterLinkActive, que nada mais é do que uma diretiva que permite aplicar estilo CSS ao link
+                quando a rota está ativa
+    1.4.  Definir uma rota Wildcard. Esta rota intercepta URL's inválidas e trata elas. Posso navegar p/ uma página 404 not found ou até redirecionar para uma rota válida
+        1.4.1.  A Wildcard (**) DEVE SER A ÚLTIMA rota da configuração, pois o router seleciona por " first match wins strategy "
+                Ex.:
+                { path: '**', component: PageNotFoundComponent }
+    1.5.  Definir uma rota inicial, fazendo redirect. Basta adicionar o path vazio e o redirecTo desejado. Colocar em cima do wildcard.
+          É necessário informar o pathMatch para dizer ao router como encontrar a URL
+          Ex.:
+          { path: '',   redirectTo: '/heroes', pathMatch: 'full' }
