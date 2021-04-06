@@ -19,3 +19,79 @@ https://angular.io/guide/router-tutorial-toh
     2.2.  No arquivo criado app-routing.module.ts, importar: CrisisListComponent, HeroListComponent e PageNotFoundComponent
     2.3.  Trazer as rotas de navegação, que estavam temporariamente na classe app.module.ts
     2.4.  Remover as definições de rotas, o RouterModule.forRoot e adicionar a importação do AppRoutingModule do app.module.ts
+3. Milestone 3: Heroes feature
+    3.1.  Criar o módulo de roteamento de heroes: ng generate module heroes/heroes --module app --flat --routing
+    3.2.  Trazer os componentes que foram criados no tutorial tour of heroes, na parte de service
+    3.3.  Mover o placeholder (pasta) hero-list, para dentro de hero
+    3.4.  Dentro do meu módulo hero, nós temos a interação de 2 componentes (list e detail). Neste módulo foi adicionado o roteamento (heroes-routing.module.ts) e por isso
+          farei a definição da rota de navegação dentro deste novo arquivo
+        3.4.1.  IMPORTANTE! Nos só chamar o RouterModule.forRoot() nos módulos TOP LEVEL (AppModule ou AppRoutingModule), Em qualquer outro módulo, usar RouterModule.forChild()
+        3.4.2.  Atualizar o arquivo heroes-routing.module.ts, adicionando as rotas deste módulo
+                Ex.:
+                const heroesRoutes: Routes = [
+                    { path: 'heroes',  component: HeroListComponent },
+                    { path: 'hero/:id', component: HeroDetailComponent }
+                ];
+        3.4.3.  Remova a rota do componente HeroListComponent do arquivo app-routing.module.ts
+        3.4.4.  DICA! Considere dar a cada módulo o seu próprio arquivo de configuração de rotas
+        3.4.5.  IMPORTANTE! A ordem das importações, no arquivo app-module.ts é importante. Como o arquivo AppRoutingModule tem uma rota wildcard, se esta importação vier antes
+                das demais, o router vai aplicar a regra first match wins e vai aplicar a rota do wildcard ao invés da rota definida no HeroesModule
+                Ex.:
+                imports: [
+                    BrowserModule,
+                    FormsModule,
+                    HeroesModule,
+                    AppRoutingModule
+                ],
+        3.4.6.  Para criar uma rota parametrizada, defini-lá com um placeholder: { path: 'hero/:id', component: HeroDetailComponent }
+            3.4.6.1.  Para "chamar" a rota parametrizavel, basta adicionar ao routerLink, conforme exemplos 1 e 2
+                      Ex. 1: 
+                      <a routerLink="/hero/{{hero.id}}">
+                      Ex. 2:
+                      <a [routerLink]="['/hero', hero.id]">
+    3.5.  Rota ativa em ação: Como capturar parametros da rota no componente hero-detail.component.ts
+        3.5.1.  Importar: Router, ActivatedRoute, ParamMap e switchMap
+        3.5.2.  Injetar no construtor: Router, ActivatedRoute, ParamMap
+        3.5.3.  Chamar no ngOnInit(), conforme exemplo em arquivo hero-detail.component.ts
+            3.5.3.1.  ActivatedRoute: Retorna a rota ativa
+            3.5.3.2.  paramMap API: é um dicionário dos parâmetros da rota, ou seja, identifica os parâmetros na URL e podemos usar seus métodos como get(), getAll(), has() e keys()
+            3.5.3.3.  switchMap: Cancela os requests pendentes e retorna a última consulta por id
+    3.6.  Retornar para a lista de heróis: Adicionando o método gotoHeroes() a minha classe, posso rotear p/ a url deseada
+          Ex.:
+          this.router.navigate(['/heroes']);
+        3.6.1.  Caso necessário, eu posso adicionar parametros opcionais a minha rota, para que CASO RECEBA estes parâmetros opcionais o componente faça algo.
+                Ex.:
+                this.router.navigate(['/heroes', { id: heroId, foo: 'foo' }]);
+                URL FINAL:
+                http://localhost:4200/heroes;id=13;foo=foo
+            3.6.1.1.  Note que a rota não precisou ter os parâmetros opcionais informados, continuou: { path: 'hero/:id', component: HeroDetailComponent }
+            3.6.1.2.  Diferente de parâmetros obrigatórios separados por ? e &, aqui a sintaxe usa ; (ponto e virgula)
+            3.6.1.3.  Para que funcione, preciso ler este parâmetro opcional para poder utilizá-lo no template, por exemplo.
+                      Aqui foi criado um método que lê a URL, captura o ID para passar para a propriedade selectedId para fazer o match no HTML
+    3.7.  Adicionando animações de roteamento:
+        3.7.1.  Importar: BrowserAnimationsModule em app.module.ts
+        3.7.2.  Adicionar ao arquivo de rotas (heroes-routing.module.ts) o objeto data
+                Ex.:
+                 { path: 'heroes',  component: HeroListComponent, data: { animation: 'heroes' } },
+        3.7.3.  Criar um arquivo de animação (animations.ts) em src/app/
+        3.7.4.  No arquivo app.component.ts, importar e adicionar ao decorator @Component
+                Ex.:
+                import { RouterOutlet } from '@angular/router';
+                import { slideInAnimation } from './animations';
+                @Component({
+                    selector: 'app-root',
+                    templateUrl: 'app.component.html',
+                    styleUrls: ['app.component.css'],
+                    animations: [ slideInAnimation ]
+                })
+            3.7.4.1.  E adicionar o método getAnimationData()
+                      Ex.:
+                      export class AppComponent {
+                        getAnimationData(outlet: RouterOutlet) {
+                            return outlet && outlet.activatedRouteData && outlet.activatedRouteData.animation;
+                        }
+                      }
+        3.7.5.  Alterar o app.component.html, enrolando o <router-outlet> em uma <div>
+                <div [@routeAnimation]="getAnimationData(routerOutlet)">
+                  <router-outlet #routerOutlet="outlet"></router-outlet>
+                </div>
